@@ -37,3 +37,27 @@
 - HEAD = merge commit (`Merge remote-tracking branch 'origin/Master'`)
 - 트리 구성: 로컬 deck 자산 + `LICENSE` + `tasks/260419_task_summary.md` + `.gitignore`
 - 원격 `Master` 브랜치와 fast-forward 없이 동기화 완료
+
+---
+
+## 추가 작업 (동일 날짜)
+
+### 요청
+프레젠테이션을 외부에 GitHub Pages 로 노출.
+
+### 결정
+- 메인 엔트리: `Process Centric AX Transformation.html` (일반 버전, 73KB)
+- `index.html` 전략: **meta refresh + JS 리다이렉트** (원본 파일 그대로 유지)
+- Pages 소스: `Master` 브랜치 루트 (`/`)
+
+### 실행 계획
+1. `index.html` 작성 (공백 포함 파일명은 URL 인코딩 `./Process%20Centric%20AX%20Transformation.html` 사용, 로딩 스피너 + 폴백 링크 포함)
+2. 커밋 & `origin/Master` 푸시
+3. `gh api` 로 GitHub Pages 활성화 (`source.branch=Master`, `source.path=/`)
+4. 배포 URL 확인: `https://cccnam5158.github.io/process-centric-ax-strategy/`
+
+### 실행 결과
+- [x] `index.html` 작성
+- [x] 커밋 & 푸시
+- [x] Pages 활성화 (API)
+- [x] 배포 URL 정상 확인

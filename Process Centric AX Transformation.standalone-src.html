@@ -1,0 +1,1389 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8" />
+<title>Process Centric AX Transformation</title>
+<template id="__bundler_thumbnail" data-bg-color="#f7f4ed">
+  <svg viewBox="0 0 1200 800" xmlns="http://www.w3.org/2000/svg">
+    <rect width="1200" height="800" fill="#f7f4ed"/>
+    <g transform="translate(600 400)">
+      <circle r="180" fill="none" stroke="#1c1c1c" stroke-width="3" opacity="0.25"/>
+      <circle r="120" fill="none" stroke="#1c1c1c" stroke-width="3" opacity="0.5"/>
+      <rect x="-120" y="-30" width="240" height="60" rx="10" fill="#1c1c1c"/>
+      <text x="0" y="8" text-anchor="middle" font-family="system-ui, sans-serif" font-size="24" font-weight="600" fill="#fcfbf8">AX</text>
+    </g>
+    <text x="600" y="700" text-anchor="middle" font-family="system-ui, sans-serif" font-size="28" font-weight="500" fill="#1c1c1c" letter-spacing="2">PROCESS CENTRIC AX TRANSFORMATION</text>
+  </svg>
+</template>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&family=Noto+Sans+KR:wght@300;400;500;600;700&display=swap');
+
+  :root {
+    --cream: #f7f4ed;
+    --charcoal: #1c1c1c;
+    --offwhite: #fcfbf8;
+    --fg-82: rgba(28,28,28,0.82);
+    --fg-muted: #5f5f5d;
+    --fg-40: rgba(28,28,28,0.40);
+    --fg-04: rgba(28,28,28,0.04);
+    --border: #eceae4;
+    --border-strong: rgba(28,28,28,0.40);
+    --signal: #2f6bff;
+    --font: 'Instrument Sans', 'Noto Sans KR', ui-sans-serif, system-ui, -apple-system, sans-serif;
+    --font-ko: 'Noto Sans KR', 'Instrument Sans', system-ui, sans-serif;
+  }
+
+  html, body { margin: 0; padding: 0; background: #000; font-family: var(--font-ko); }
+
+  /* Slide frame */
+  deck-stage section {
+    background: var(--cream);
+    color: var(--charcoal);
+    font-family: var(--font-ko);
+    font-feature-settings: "ss01", "tnum";
+    display: flex;
+    flex-direction: column;
+    padding: 100px 120px 90px 120px;
+    box-sizing: border-box;
+    position: relative;
+  }
+
+  /* ---- Type scale (1920x1080) ---- */
+  .t-hero    { font-size: 88px; line-height: 1.05; font-weight: 600; letter-spacing: -2.2px; }
+  .t-title   { font-size: 64px; line-height: 1.1;  font-weight: 600; letter-spacing: -1.5px; }
+  .t-sub     { font-size: 44px; line-height: 1.15; font-weight: 500; letter-spacing: -1px; }
+  .t-lead    { font-size: 34px; line-height: 1.45; font-weight: 400; color: var(--fg-82); letter-spacing: -0.3px; }
+  .t-body    { font-size: 28px; line-height: 1.55; font-weight: 400; color: var(--fg-82); letter-spacing: -0.2px; }
+  .t-small   { font-size: 24px; line-height: 1.5;  font-weight: 400; color: var(--fg-muted); letter-spacing: -0.15px; }
+  .t-caption { font-size: 20px; line-height: 1.4;  font-weight: 400; color: var(--fg-muted); letter-spacing: 0; text-transform: uppercase; font-family: var(--font); }
+  .t-numeric { font-feature-settings: "tnum" 1; }
+
+  /* ---- Eyebrow / section label ---- */
+  .eyebrow {
+    display: inline-flex; align-items: center; gap: 12px;
+    font: 500 22px/1 var(--font);
+    letter-spacing: 0.04em;
+    color: var(--fg-muted);
+    text-transform: uppercase;
+    margin-bottom: 44px;
+  }
+  .eyebrow::before {
+    content: ''; display: inline-block; width: 32px; height: 1px;
+    background: var(--border-strong);
+  }
+
+  /* ---- Section divider ---- */
+  .rule { height: 1px; background: var(--border); margin: 32px 0; border: 0; }
+
+  /* ---- Card ---- */
+  .card {
+    background: var(--cream);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 36px 40px;
+  }
+  .card-dark {
+    background: var(--charcoal);
+    color: var(--offwhite);
+    border-radius: 12px;
+    padding: 36px 40px;
+  }
+  .card-dark .t-body { color: rgba(252,251,248,0.82); }
+  .card-dark .t-small { color: rgba(252,251,248,0.6); }
+
+  /* ---- Layout utilities ---- */
+  .row  { display: flex; gap: 32px; }
+  .col  { display: flex; flex-direction: column; gap: 24px; }
+  .grow { flex: 1; }
+
+  /* ---- Slide number ---- */
+  .slide-num {
+    position: absolute;
+    top: 56px; right: 120px;
+    font: 500 20px/1 var(--font);
+    letter-spacing: 0.08em;
+    color: var(--fg-muted);
+  }
+  .slide-mark {
+    position: absolute;
+    bottom: 44px; left: 120px;
+    font: 500 18px/1 var(--font);
+    letter-spacing: 0.12em;
+    color: var(--fg-muted);
+    text-transform: uppercase;
+  }
+
+  /* ---- Table ---- */
+  table.mzc {
+    border-collapse: collapse;
+    width: 100%;
+    font-size: 26px;
+  }
+  table.mzc th, table.mzc td {
+    padding: 18px 24px;
+    text-align: left;
+    vertical-align: top;
+    border-bottom: 1px solid var(--border);
+  }
+  table.mzc th {
+    font-weight: 500;
+    font-size: 22px;
+    color: var(--fg-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    border-bottom: 1px solid var(--border-strong);
+    font-family: var(--font);
+  }
+  table.mzc td.num {
+    font-feature-settings: "tnum" 1;
+    font-family: var(--font);
+    font-weight: 500;
+    font-size: 32px;
+  }
+
+  /* ---- Big number ---- */
+  .big-num {
+    font: 600 180px/0.95 var(--font);
+    letter-spacing: -6px;
+    font-feature-settings: "tnum" 1;
+  }
+  .big-num.sm { font-size: 140px; letter-spacing: -4px; }
+  .big-num .unit { font-size: 48px; letter-spacing: -1px; margin-left: 8px; color: var(--fg-muted); font-weight: 500; }
+
+  /* ---- Hero wash (cream atmospheric gradient) ---- */
+  .hero-wash {
+    background:
+      radial-gradient(ellipse 80% 60% at 15% 20%, rgba(255, 190, 170, 0.35), transparent 60%),
+      radial-gradient(ellipse 70% 50% at 85% 30%, rgba(255, 220, 180, 0.30), transparent 60%),
+      radial-gradient(ellipse 60% 50% at 50% 95%, rgba(180, 200, 255, 0.22), transparent 60%),
+      var(--cream);
+  }
+
+  /* ---- Tag / chip ---- */
+  .tag {
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 6px 14px;
+    border: 1px solid var(--border);
+    border-radius: 9999px;
+    background: var(--cream);
+    font: 500 20px/1 var(--font);
+    color: var(--fg-82);
+  }
+  .tag-dark {
+    background: var(--charcoal); color: var(--offwhite);
+    border: 1px solid var(--charcoal);
+  }
+  .tag-blue { color: var(--signal); border-color: rgba(47,107,255,0.4); }
+
+  /* ---- Numbered item ---- */
+  .item {
+    display: flex; gap: 24px; align-items: baseline;
+  }
+  .item .idx {
+    font: 500 28px/1 var(--font);
+    color: var(--fg-muted);
+    min-width: 40px;
+    font-feature-settings: "tnum" 1;
+  }
+  .item .body { flex: 1; }
+
+  /* ---- Dark bg slide variant ---- */
+  section.dark {
+    background: var(--charcoal);
+    color: var(--offwhite);
+  }
+  section.dark .t-lead, section.dark .t-body { color: rgba(252,251,248,0.82); }
+  section.dark .t-small, section.dark .t-caption, section.dark .slide-num, section.dark .slide-mark { color: rgba(252,251,248,0.55); }
+  section.dark .eyebrow { color: rgba(252,251,248,0.55); }
+  section.dark .eyebrow::before { background: rgba(252,251,248,0.3); }
+  section.dark .card { background: transparent; border: 1px solid rgba(252,251,248,0.15); }
+  section.dark table.mzc th, section.dark table.mzc td { border-bottom-color: rgba(252,251,248,0.12); color: rgba(252,251,248,0.82); }
+  section.dark table.mzc th { color: rgba(252,251,248,0.55); border-bottom-color: rgba(252,251,248,0.3); }
+  section.dark .rule { background: rgba(252,251,248,0.15); }
+  section.dark .tag { background: transparent; border-color: rgba(252,251,248,0.2); color: var(--offwhite); }
+
+  /* ---- Quote ---- */
+  .quote {
+    font: 500 54px/1.25 var(--font-ko);
+    letter-spacing: -1px;
+    color: var(--charcoal);
+  }
+  section.dark .quote { color: var(--offwhite); }
+
+  /* ---- Flow diagram boxes (slide 17) ---- */
+  .flow-box {
+    border: 1px solid var(--border-strong);
+    background: var(--cream);
+    border-radius: 12px;
+    padding: 20px 24px;
+    font: 500 24px/1.25 var(--font-ko);
+    color: var(--charcoal);
+    text-align: center;
+    min-height: 80px;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .flow-box.accent { background: var(--charcoal); color: var(--offwhite); border-color: var(--charcoal); }
+
+  /* Mini MZC wordmark */
+  .wordmark {
+    font: 700 20px/1 var(--font);
+    letter-spacing: 0.08em;
+    color: var(--charcoal);
+  }
+  .wordmark .dot { color: var(--signal); }
+
+  /* Footnote row */
+  .footnote {
+    font: 400 20px/1.4 var(--font-ko);
+    color: var(--fg-muted);
+    margin-top: 24px;
+  }
+
+  /* Large grid for 9 causes */
+  .nine-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+  }
+  .nine-grid .cell {
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 24px 28px;
+    background: var(--cream);
+  }
+  .nine-grid .cell .idx {
+    font: 500 20px/1 var(--font);
+    color: var(--fg-muted);
+    letter-spacing: 0.06em;
+    margin-bottom: 12px;
+  }
+  .nine-grid .cell .title {
+    font: 500 26px/1.2 var(--font-ko);
+    letter-spacing: -0.4px;
+  }
+
+  /* Principle card (7 principles) */
+  .prin {
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 28px 32px;
+    background: var(--cream);
+  }
+  .prin .num {
+    font: 500 22px/1 var(--font);
+    color: var(--fg-muted);
+    letter-spacing: 0.08em;
+    margin-bottom: 12px;
+  }
+  .prin .name {
+    font: 500 30px/1.2 var(--font-ko);
+    letter-spacing: -0.5px;
+    margin-bottom: 12px;
+  }
+  .prin .desc {
+    font: 400 22px/1.45 var(--font-ko);
+    color: var(--fg-82);
+  }
+
+  /* Stat cluster (slide 21) */
+  .stat-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr 1fr;
+    gap: 40px;
+  }
+  .stat-row .stat .val {
+    font: 600 84px/0.95 var(--font);
+    letter-spacing: -2.5px;
+    font-feature-settings: "tnum" 1;
+  }
+  .stat-row .stat .lbl {
+    font: 400 22px/1.35 var(--font-ko);
+    color: var(--fg-muted);
+    margin-top: 12px;
+  }
+
+  /* S-curve SVG */
+  .curve-wrap { position: relative; height: 420px; }
+
+</style>
+</head>
+<body>
+
+<deck-stage width="1920" height="1080">
+
+<!-- ============ 1. TITLE ============ -->
+<section data-label="Title" class="hero-wash" style="justify-content: space-between; padding: 100px 120px;">
+  <div style="display: flex; justify-content: space-between; align-items: center;">
+    <div class="wordmark">MEGAZONE<span class="dot">·</span>CLOUD</div>
+    <div class="t-caption">AX Strategy Brief · v2 · 2026.04</div>
+  </div>
+
+  <div style="max-width: 1500px;">
+    <div class="eyebrow" style="margin-bottom: 40px;">Process Centric AX Transformation</div>
+    <h1 class="t-hero" style="margin-bottom: 32px;">
+      암묵지와 프로세스의<br/>
+      Digital Twin화를 통한<br/>
+      지속가능한 AX 추진 전략
+    </h1>
+    <div class="t-lead" style="max-width: 1200px;">
+      더 좋은 모델도, 더 많은 에이전트도 아니다. 기업이 가진 암묵지와 프로세스를 디지털 자산으로 축적하고, 그 위에서 사람과 AI Agent가 통제 가능한 방식으로 협업하게 하는 것.
+    </div>
+  </div>
+
+  <div style="display: flex; justify-content: space-between; align-items: flex-end;">
+    <div class="t-small" style="max-width: 900px;">
+      대상 독자 · CAIO · CDO · PI/TF 리더 · 현업 임원<br/>
+      문서 구조 · 현실 진단 → 9가지 원인 → 7대 설계 원칙 → 실행 관점 → 정량 성과 → 리더십 제언
+    </div>
+    <div class="t-caption">2026 · Seoul</div>
+  </div>
+</section>
+
+
+<!-- ============ 2. EXEC SUMMARY — FRAME ============ -->
+<section data-label="Executive Summary">
+  <span class="slide-num">02</span>
+  <div class="eyebrow">Executive Summary</div>
+  <h2 class="t-title" style="margin-bottom: 56px; max-width: 1500px;">
+    AI는 개인의 책상 위에는 올라왔지만,<br/>
+    기업의 업무 흐름 안으로는 들어오지 못했다.
+  </h2>
+
+  <div class="row" style="gap: 40px; margin-top: auto;">
+    <div class="card" style="flex: 1;">
+      <div class="t-caption" style="margin-bottom: 18px;">문제의식</div>
+      <div class="t-body" style="color: var(--charcoal);">
+        도입률과 내재화율 사이의 <b>10배 격차</b>는, AI가 "더 잘 쓰는 개인"을 만들어내고 있지만, "더 잘 일하는 조직"은 만들지 못하고 있다는 뜻이다.
+      </div>
+    </div>
+    <div class="card-dark" style="flex: 1;">
+      <div class="t-caption" style="margin-bottom: 18px; color: rgba(252,251,248,0.55);">본 보고서의 입장</div>
+      <div class="t-body" style="color: rgba(252,251,248,0.92);">
+        AX가 지속가능하려면, 개인 생산성이 아니라 <b>프로세스의 진화</b>가 대상이 되어야 한다. 프로세스가 디지털 자산으로 축적되지 않으면, 어떤 모델·에이전트를 갖다 놓아도 그 효과는 사람과 함께 사라진다.
+      </div>
+    </div>
+  </div>
+  <span class="slide-mark">01 · Reality</span>
+</section>
+
+
+<!-- ============ 3. REALITY — BIG NUMBERS ============ -->
+<section data-label="Reality Numbers">
+  <span class="slide-num">03</span>
+  <div class="eyebrow">Reality · 숫자가 말하는 현실</div>
+  <h2 class="t-title" style="margin-bottom: 72px;">도입은 됐지만, 내재화는 안 됐다.</h2>
+
+  <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 48px;">
+    <div>
+      <div class="big-num t-numeric">61.1<span class="unit">%</span></div>
+      <div class="t-body" style="margin-top: 24px;">국내 생성형 AI 도입률</div>
+      <div class="t-small" style="margin-top: 8px;">개인·팀 단위 확산</div>
+    </div>
+    <div>
+      <div class="big-num t-numeric" style="color: var(--fg-82);">6.7<span class="unit">%</span></div>
+      <div class="t-body" style="margin-top: 24px;">국내 전사 내재화</div>
+      <div class="t-small" style="margin-top: 8px;">도입률의 10분의 1 수준</div>
+    </div>
+    <div>
+      <div class="big-num t-numeric" style="color: var(--signal);">3.7<span class="unit">%</span></div>
+      <div class="t-body" style="margin-top: 24px;">국내 AI 에이전트 전사 내재화</div>
+      <div class="t-small" style="margin-top: 8px;">에이전트는 여전히 실험 단계</div>
+    </div>
+  </div>
+
+  <hr class="rule" style="margin: 72px 0 40px 0;"/>
+
+  <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 48px;">
+    <div>
+      <div class="t-caption" style="margin-bottom: 8px;">글로벌 · Camunda 2026</div>
+      <div class="t-sub t-numeric" style="font-size: 56px;">71% → 11%</div>
+      <div class="t-small" style="margin-top: 8px;">에이전트 사용률 대비 프로덕션 도달</div>
+    </div>
+    <div>
+      <div class="t-caption" style="margin-bottom: 8px;">McKinsey · State of AI 2025</div>
+      <div class="t-sub t-numeric" style="font-size: 56px;">약 1%</div>
+      <div class="t-small" style="margin-top: 8px;">조직적 성숙 롤아웃 비율</div>
+    </div>
+    <div>
+      <div class="t-caption" style="margin-bottom: 8px;">Camunda</div>
+      <div class="t-sub t-numeric" style="font-size: 56px;">85%</div>
+      <div class="t-small" style="margin-top: 8px;">프로세스 성숙도 미달 응답</div>
+    </div>
+  </div>
+
+  <div class="footnote">출처 · Carrot Global (2026), Camunda State of Agentic Orchestration 2026, McKinsey State of AI 2025</div>
+</section>
+
+
+<!-- ============ 4. GAP — MEANING ============ -->
+<section data-label="Meaning of the Gap" class="dark">
+  <span class="slide-num">04</span>
+  <div class="eyebrow">무엇을 의미하는가</div>
+  <div style="flex: 1; display: flex; flex-direction: column; justify-content: center; max-width: 1550px;">
+    <div class="quote" style="font-size: 64px; line-height: 1.25;">
+      AI는 개인의 책상 위에는 올라왔다.<br/>
+      그러나 기업의 <span style="color: rgba(252,251,248,0.55);">업무 흐름·의사결정·책임 구조</span> 안으로는 들어오지 못했다.
+    </div>
+    <div class="t-lead" style="margin-top: 56px; font-size: 30px; max-width: 1400px;">
+      AI는 "더 잘 쓰는 개인"을 만들고 있지만, "더 잘 일하는 조직"을 만들지는 못하고 있다. AX의 진짜 미션은 후자다.
+    </div>
+  </div>
+  <div class="t-small" style="margin-top: 40px; font-style: italic;">— 본 보고서의 문제의식</div>
+</section>
+
+
+<!-- ============ 5. 9 CAUSES — OVERVIEW ============ -->
+<section data-label="9 Causes Overview">
+  <span class="slide-num">05</span>
+  <div class="eyebrow">Why · 9가지 구조적 원인</div>
+  <h2 class="t-title" style="margin-bottom: 48px;">현재의 AX가 지속가능하지 않은 이유</h2>
+
+  <div class="nine-grid">
+    <div class="cell"><div class="idx">01</div><div class="title">개인 생산성 편향</div></div>
+    <div class="cell"><div class="idx">02</div><div class="title">No/Low-Code와 Full-Code의 이중 허들</div></div>
+    <div class="cell"><div class="idx">03</div><div class="title">자연어 빌더의 통제·보안·GRC 한계</div></div>
+    <div class="cell"><div class="idx">04</div><div class="title">Prompt·Context·Harness는 "도구"일 뿐</div></div>
+    <div class="cell"><div class="idx">05</div><div class="title">Skill·MCP·Tools의 사용자 장벽</div></div>
+    <div class="cell"><div class="idx">06</div><div class="title">일관성 부족과 환각의 기술적 한계</div></div>
+    <div class="cell"><div class="idx">07</div><div class="title">리더십 KPI 압박이 만드는 급박 추진</div></div>
+    <div class="cell"><div class="idx">08</div><div class="title">개인도 설명 못하는 암묵적 워크플로우</div></div>
+    <div class="cell"><div class="idx">09</div><div class="title">암묵지-인수인계-표준화의 단절</div></div>
+  </div>
+
+  <div class="footnote" style="margin-top: 40px;">공통 메시지 — 지금 AX의 병목은 기술이 아니라 <b>프로세스·책임·지식의 구조적 공백</b>에서 발생한다.</div>
+  <span class="slide-mark">02 · Why</span>
+</section>
+
+
+<!-- ============ 6. CAUSES 1-3 ============ -->
+<section data-label="Causes 1–3">
+  <span class="slide-num">06</span>
+  <div class="eyebrow">Why · 원인 1 – 3</div>
+  <h2 class="t-sub" style="margin-bottom: 48px;">기술 확산이 만들어낸 편향과 허들</h2>
+
+  <div class="col" style="gap: 24px;">
+    <div class="prin">
+      <div class="num">01 · 개인 생산성 편향</div>
+      <div class="name">Agent 프레임워크의 고도화는 개인의 속도를 올린다</div>
+      <div class="desc">LangGraph·LlamaIndex·AutoGen은 개인 업무의 효율을 높이지만, 조직이 얻는 편익은 "인력 절감의 명분" 수준에서 멈추기 쉽다. <b>공식 업무 프로세스에 통합된 ROI</b>는 증명되지 않은 채 파일럿이 종료된다.</div>
+    </div>
+    <div class="prin">
+      <div class="num">02 · 이중 허들</div>
+      <div class="name">No/Low-Code는 낯설고, Full-Code는 감당 불가</div>
+      <div class="desc">"누구나 만드는 에이전트"도 트리거·상태·권한·배포라는 낯선 개념을 요구하고, 풀코드는 제한된 개발자 풀로 감당하기 어렵다. 그림 좋은 데모와 실제 운영 사이에 <b>깊은 계곡</b>이 있다.</div>
+    </div>
+    <div class="prin">
+      <div class="num">03 · 자연어 빌더의 GRC 한계</div>
+      <div class="name">통제 범위가 모호한 채로 배포된다</div>
+      <div class="desc">Skill·MCP·Tools·Auth·Reliability는 표준화되지 않은 채 빠르게 변동한다. 새 워크플로우마다 권한·통제·감사 설계를 반복해야 하며, 결국 <b>변경 관리가 사실상 불가능</b>한 상태에 빠진다.</div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ============ 7. CAUSES 4-6 ============ -->
+<section data-label="Causes 4–6">
+  <span class="slide-num">07</span>
+  <div class="eyebrow">Why · 원인 4 – 6</div>
+  <h2 class="t-sub" style="margin-bottom: 48px;">도구를 목적으로 치환할 때 생기는 공백</h2>
+
+  <div class="col" style="gap: 24px;">
+    <div class="prin">
+      <div class="num">04 · Prompt · Context · Harness</div>
+      <div class="name">이들은 "도구"이지, 프로세스 혁신 그 자체가 아니다</div>
+      <div class="desc">더 좋은 프롬프트가 더 좋은 업무 프로세스를 자동으로 만들지 않는다. <b>정의·합의·기록 없이 프롬프트만 정교</b>해지는 방향은 "개인기로 잘 쓰는 소수"를 늘릴 뿐이다.</div>
+    </div>
+    <div class="prin">
+      <div class="num">05 · Skill · MCP · Architecture</div>
+      <div class="name">사용자가 이해하지 못하는 도구는 통제되지 않는다</div>
+      <div class="desc">ReAct·Plan-and-Execute·Reflection 같은 아키텍처 패턴은 개발자 언어다. 현업에게는 블랙박스에 가깝다. 통제되지 않는 에이전트는 제한적으로만 쓰이거나 <b>조직 내 신뢰를 잃는다</b>.</div>
+    </div>
+    <div class="prin">
+      <div class="num">06 · 일관성 · 환각의 기술적 한계</div>
+      <div class="name">"1인이 여러 Agent로 회사 운영"은 아직 서사에 가깝다</div>
+      <div class="desc">최신 모델도 일관성 부족·환각·장기 계획 실패를 보인다. 규제 산업(금융·의료·공공)에서 치명적이며, <b>EU AI Act·NIST AI RMF 모두 인간 감독·오버라이드 가능성</b>을 구조적으로 요구한다.</div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ============ 8. CAUSES 7-9 ============ -->
+<section data-label="Causes 7–9">
+  <span class="slide-num">08</span>
+  <div class="eyebrow">Why · 원인 7 – 9</div>
+  <h2 class="t-sub" style="margin-bottom: 48px;">조직 관성과 지식의 누수</h2>
+
+  <div class="col" style="gap: 24px;">
+    <div class="prin">
+      <div class="num">07 · 리더십의 실적 압박</div>
+      <div class="name">"올해 몇 건" KPI가 보여주기식 파일럿을 만든다</div>
+      <div class="desc">선별된 과제를 급박하게 추진하는 속도에서는, 성숙되지 않은 플랫폼과 빠르게 변하는 표준에 기민하게 대응하기 어렵다. 결과는 <b>가트너가 말하는 "환멸의 계곡"의 가속</b>이다.</div>
+    </div>
+    <div class="prin">
+      <div class="num">08 · 암묵적 워크플로우</div>
+      <div class="name">개인도 본인의 업무 흐름을 설명하지 못한다</div>
+      <div class="desc">그러나 이는 "불가능"이 아니라 "발견·기록·합의의 자리가 없었을 뿐"이다. AX 추진은 이 <b>"발견–기록–합의"의 자리</b>를 만드는 것에서 시작해야 한다.</div>
+    </div>
+    <div class="prin">
+      <div class="num">09 · 지식 누수</div>
+      <div class="name">암묵지는 사람의 머리에만 있을 때 취약하다</div>
+      <div class="desc">퇴사·이동·조직개편 한 번에 사라진다. 암묵지는 <b>시스템과 프로세스를 통해 기록</b>되고, 시장과 기업의 <b>적용·개선을 통해 축적</b>되어야 한다. AX의 진짜 가치는 여기에 있다.</div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ============ 9. CORE THESIS ============ -->
+<section data-label="Core Thesis" class="dark" style="justify-content: center;">
+  <span class="slide-num">09</span>
+  <div class="eyebrow" style="margin-bottom: 56px;">How · Process Centric AX Transformation · 핵심 명제</div>
+  <div class="quote" style="font-size: 72px; line-height: 1.22; max-width: 1600px;">
+    기업의 <span style="color: #ffbfa8;">암묵지와 프로세스를 Digital Twin화</span>하여,<br/>
+    그 위에서 <span style="color: #ffbfa8;">사람·AI Agent·시스템의 협업</span>을<br/>
+    설계·기록·학습·통제한다.
+  </div>
+  <div class="t-lead" style="margin-top: 72px; max-width: 1400px; font-size: 30px;">
+    BPMN·CMMN·DMN, A2A·MCP, Process Intelligence는 이 목적을 달성하기 위한 <b>수단</b>이다. 수단을 목적으로 치환하는 순간 AX는 다시 "기술 프로젝트의 반복"이 된다.
+  </div>
+  <span class="slide-mark">03 · How</span>
+</section>
+
+
+<!-- ============ 10. THREE PREMISES ============ -->
+<section data-label="Three Premises">
+  <span class="slide-num">10</span>
+  <div class="eyebrow">How · 세 가지 전제</div>
+  <h2 class="t-title" style="margin-bottom: 64px;">Digital Twin이 기능하기 위한 기반</h2>
+
+  <div class="row" style="gap: 32px;">
+    <div class="card" style="flex: 1;">
+      <div class="t-caption" style="margin-bottom: 20px;">전제 1</div>
+      <div class="t-sub" style="font-size: 38px; margin-bottom: 20px;">프로세스는 기업의 가장 오래 가는 자산이다</div>
+      <div class="t-body">인력·도구·모델·플랫폼은 바뀐다. 그러나 "일하는 방식"은 오래 간다. AX의 기준점은 프로세스여야 한다.</div>
+    </div>
+    <div class="card" style="flex: 1;">
+      <div class="t-caption" style="margin-bottom: 20px;">전제 2</div>
+      <div class="t-sub" style="font-size: 38px; margin-bottom: 20px;">Digital Twin은 거창한 신기술이 아니다</div>
+      <div class="t-body">"업무 흐름을 시스템에 살아있게 기록하는 것"이다. 프로세스·참여자·결정 기준·케이스별 절차·핸드오프 이력이 데이터로 남으면, 그 자체가 Digital Twin이다.</div>
+    </div>
+    <div class="card" style="flex: 1;">
+      <div class="t-caption" style="margin-bottom: 20px;">전제 3</div>
+      <div class="t-sub" style="font-size: 38px; margin-bottom: 20px;">AI Agent는 이 Twin 위에서 일하는 새 구성원이다</div>
+      <div class="t-body">사람 구성원에게 적용하던 온보딩·직무기술서·권한·감사 체계를 AI Agent에도 <b>동일하게 적용</b>할 수 있어야 한다.</div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ============ 11. 7 PRINCIPLES OVERVIEW ============ -->
+<section data-label="7 Principles Overview">
+  <span class="slide-num">11</span>
+  <div class="eyebrow">How · 7대 설계 원칙</div>
+  <h2 class="t-title" style="margin-bottom: 48px;">Process Centric AX의 설계 원칙</h2>
+
+  <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px;">
+    <div class="prin"><div class="num">원칙 01</div><div class="name" style="font-size: 26px;">Digital Twin을 AX의 시작점으로</div></div>
+    <div class="prin"><div class="num">원칙 02</div><div class="name" style="font-size: 26px;">표현 프레임워크 채택 (BPMN·CMMN·DMN)</div></div>
+    <div class="prin"><div class="num">원칙 03</div><div class="name" style="font-size: 26px;">모든 Handoff를 시스템에 기록</div></div>
+    <div class="prin"><div class="num">원칙 04</div><div class="name" style="font-size: 26px;">시행착오가 사람·AI 모두에 학습된다</div></div>
+    <div class="prin"><div class="num">원칙 05</div><div class="name" style="font-size: 26px;">GRC를 프로세스에 내재화</div></div>
+    <div class="prin"><div class="num">원칙 06</div><div class="name" style="font-size: 26px;">단계적 자동화 · Redesign 근거 데이터</div></div>
+    <div class="prin" style="background: var(--charcoal); color: var(--offwhite); border-color: var(--charcoal);"><div class="num" style="color: rgba(252,251,248,0.6);">원칙 07</div><div class="name" style="font-size: 26px; color: var(--offwhite);">자율성 증가에 대비한 Kill-Switch 거버넌스</div></div>
+    <div class="prin" style="background: transparent; border: 1px dashed var(--border-strong); display: flex; align-items: center; justify-content: center;">
+      <div class="t-small" style="text-align: center;">7원칙은 독립된 체크리스트가 아니라<br/><b>하나의 시스템</b>으로 맞물린다</div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ============ 12. PRINCIPLES 1-2 ============ -->
+<section data-label="Principles 1–2">
+  <span class="slide-num">12</span>
+  <div class="eyebrow">원칙 1 – 2</div>
+  <h2 class="t-sub" style="margin-bottom: 48px;">AX의 출발점을 "모델 선정"에서 "프로세스 모델링"으로</h2>
+
+  <div class="row" style="gap: 32px;">
+    <div class="prin" style="flex: 1;">
+      <div class="num">원칙 01</div>
+      <div class="name">암묵지·프로세스의 Digital Twin화가 시작점</div>
+      <div class="desc" style="margin-bottom: 24px;">로드맵의 첫 과제는 모델도 플랫폼도 에이전트도 아니다. 우리 회사의 업무 흐름을 <b>발견·기록·합의</b>하는 것이다. 선행되지 않으면, 그 위의 자동화는 "혼돈의 자동화(Automating Chaos)"가 된다.</div>
+      <hr class="rule" style="margin: 16px 0;"/>
+      <div class="t-small" style="font-size: 22px; line-height: 1.5;">
+        · 프로세스/태스크 마이닝·인터뷰·규정 검토로 As-Is 진단<br/>
+        · 워크숍으로 숨은 분기·예외·판단 기준을 드러냄<br/>
+        · 문서가 아닌 <b>실행 가능한 모델</b>로 남김
+      </div>
+    </div>
+
+    <div class="prin" style="flex: 1;">
+      <div class="num">원칙 02</div>
+      <div class="name">다섯 가지를 동시에 표현하는 프레임워크를 채택</div>
+      <table class="mzc" style="margin-top: 16px; font-size: 22px;">
+        <thead><tr><th>표현 대상</th><th>표준</th></tr></thead>
+        <tbody>
+          <tr><td>프로세스(Process)</td><td class="num" style="font-size: 22px;">BPMN</td></tr>
+          <tr><td>참여자(Participant)</td><td class="num" style="font-size: 22px;">BPMN Lane · Role</td></tr>
+          <tr><td>업무 절차(Procedure)</td><td class="num" style="font-size: 22px;">BPMN Task · Gateway</td></tr>
+          <tr><td>의사결정 기준(Decision)</td><td class="num" style="font-size: 22px;">DMN</td></tr>
+          <tr><td>케이스별 절차(Case)</td><td class="num" style="font-size: 22px;">CMMN</td></tr>
+        </tbody>
+      </table>
+      <div class="t-small" style="margin-top: 18px; font-size: 20px;">국제 표준은 수단이지 목적이 아니다. 더 나은 프레임워크가 나오면 교체되어도 좋다.</div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ============ 13. PRINCIPLES 3-4 ============ -->
+<section data-label="Principles 3–4">
+  <span class="slide-num">13</span>
+  <div class="eyebrow">원칙 3 – 4</div>
+  <h2 class="t-sub" style="margin-bottom: 48px;">Handoff를 기록하고, 기록을 학습 루프로 되돌린다</h2>
+
+  <div class="row" style="gap: 32px;">
+    <div class="prin" style="flex: 1;">
+      <div class="num">원칙 03</div>
+      <div class="name">사람-사람·사람-AI·AI-AI의 Handoff를 시스템에 기록</div>
+      <div class="desc" style="margin-bottom: 20px;">핸드오프는 정보 손실과 책임 누수가 가장 많이 일어나는 지점이다. 기록되는 순간 <b>감사·재현·개선의 근거</b>가 동시에 확보된다.</div>
+      <div class="t-small" style="font-size: 22px; line-height: 1.6;">
+        기록 최소 항목<br/>
+        · 전달 정보(input)와 출처<br/>
+        · 의사결정의 근거<br/>
+        · 실행된 액션 순서<br/>
+        · 산출물(artifact)과 버전<br/>
+        · 참여자 ID · 권한 레벨
+      </div>
+    </div>
+
+    <div class="prin" style="flex: 1;">
+      <div class="num">원칙 04</div>
+      <div class="name">시행착오가 사람·AI 모두에 학습되어 반영된다</div>
+      <div class="desc" style="margin-bottom: 20px;">Digital Twin은 정적 문서가 아니다. 예외·개선 아이디어가 <b>사람의 학습과 AI의 프롬프트·Context·규칙</b>에 반영되는 루프가 필요하다.</div>
+      <div class="t-small" style="font-size: 22px; line-height: 1.6;">
+        필요한 장치<br/>
+        · 실행 로그에서 이상 패턴 자동 감지<br/>
+        · 개선 제안이 모델의 후보 변경으로 연결<br/>
+        · DMN·프롬프트 변경 이력의 버전 관리<br/>
+        · 영향 범위 시뮬레이션
+      </div>
+      <div class="t-caption" style="margin-top: 18px; color: var(--signal);">Model-to-Execution Pipeline</div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ============ 14. PRINCIPLES 5-6-7 ============ -->
+<section data-label="Principles 5–7">
+  <span class="slide-num">14</span>
+  <div class="eyebrow">원칙 5 – 7</div>
+  <h2 class="t-sub" style="margin-bottom: 48px;">GRC·점진적 자동화·Kill-Switch</h2>
+
+  <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px;">
+    <div class="prin">
+      <div class="num">원칙 05</div>
+      <div class="name">GRC를 프로세스에 내재화</div>
+      <div class="desc">GRC는 외부 감시자가 아니라 <b>내부 근간</b>이 되어야 한다. Compliance by Design.</div>
+      <hr class="rule" style="margin: 18px 0;"/>
+      <div class="t-small" style="font-size: 20px; line-height: 1.55;">
+        · 결정 노드에 Who-can-approve/override 명시<br/>
+        · 에이전트 액션은 Policy Gate 통과<br/>
+        · 단일 소스의 불변 감사 로그<br/>
+        · 배포 전 정책 위반 시뮬레이션
+      </div>
+    </div>
+
+    <div class="prin">
+      <div class="num">원칙 06</div>
+      <div class="name">단계적 자동화와 Redesign 근거</div>
+      <div class="desc">오늘 초안 생성 → 1년 뒤 승인 전 검토 → 2년 뒤 저위험 케이스 자동 처리. <b>점진적 자동화 곡선</b>을 수용한다.</div>
+      <hr class="rule" style="margin: 18px 0;"/>
+      <div class="t-small" style="font-size: 20px; line-height: 1.55;">
+        축적 데이터가 직무·프로세스 재설계의 <b>실증적 근거</b>가 된다. 감(感)에 의존한 조직 개편이 아닌, <b>프로세스 데이터 기반</b>의 조직 진화.
+      </div>
+    </div>
+
+    <div class="prin" style="background: var(--charcoal); color: var(--offwhite); border-color: var(--charcoal);">
+      <div class="num" style="color: rgba(252,251,248,0.6);">원칙 07</div>
+      <div class="name" style="color: var(--offwhite);">Kill-Switch 거버넌스</div>
+      <div class="desc" style="color: rgba(252,251,248,0.82);">에이전트 역량이 높아질수록 파급도 커진다. 모든 단계에 <b>즉각 중단 경로</b>가 있어야 한다.</div>
+      <hr class="rule" style="margin: 18px 0; background: rgba(252,251,248,0.15);"/>
+      <div class="t-small" style="font-size: 20px; line-height: 1.55; color: rgba(252,251,248,0.7);">
+        ① Pre-execution Guardrail — DMN 정책 테이블<br/>
+        ② In-flight Monitoring — confidence·이상치<br/>
+        ③ Post-execution Rollback — BPMN 보상 이벤트
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ============ 15. PRINCIPLES SYSTEM DIAGRAM ============ -->
+<section data-label="7 Principles System" id="slide-system">
+  <span class="slide-num">15</span>
+  <div class="eyebrow">원칙의 관계도</div>
+  <h2 class="t-title" style="margin-bottom: 24px; font-size: 52px;">7원칙은 하나의 시스템으로 맞물린다</h2>
+
+  <!-- Diagram variants: #1 Orbit (default), #2 Layered stack, #3 Cycle -->
+  <div id="diagram-host" style="flex: 1; display: flex; align-items: center; justify-content: center; min-height: 620px;"></div>
+
+  <div class="footnote" style="text-align: center; margin-top: 8px; font-size: 20px;">
+    어느 하나가 빠지면 나머지가 공허해진다. Handoff 기록(③)이 학습 루프(④)의 데이터를 만들고, GRC(⑤)가 자동화(⑥)의 리스크를 통제한다.
+  </div>
+</section>
+
+<script>
+/* ============ Slide 15 — connection diagrams ============ */
+(function(){
+  const TWEAK_DEFAULS = /*EDITMODE-BEGIN*/{
+    "diagramVariant": "cycle"
+  }/*EDITMODE-END*/;
+  const state = { ...TWEAK_DEFAULS };
+
+  const host = document.getElementById('diagram-host');
+  if (!host) return;
+
+  // ---------------------------------------------------------------------
+  // Variant 1 — ORBIT: principle 7 at center, 1–6 orbit with clear edges
+  // ---------------------------------------------------------------------
+  function renderOrbit() {
+    const W = 1500, H = 620;
+    // Node positions (center-based). 6 nodes around, 7 in middle.
+    const cx = W/2, cy = H/2;
+    const nodes = [
+      { id: 1, label: '① Digital Twin화',              x: cx - 560, y: cy - 200, w: 300, h: 88 },
+      { id: 2, label: '② 표현 프레임워크',              x: cx + 260, y: cy - 200, w: 300, h: 88 },
+      { id: 3, label: '③ Handoff 기록',                x: cx - 640, y: cy + 20,  w: 300, h: 88 },
+      { id: 4, label: '④ 학습 · 개선 루프',             x: cx + 340, y: cy + 20,  w: 300, h: 88 },
+      { id: 5, label: '⑤ GRC 내재화',                  x: cx - 560, y: cy + 220, w: 300, h: 88 },
+      { id: 6, label: '⑥ 단계적 자동화 · Redesign',     x: cx + 260, y: cy + 220, w: 300, h: 88 },
+      { id: 7, label: '⑦ Kill-Switch 거버넌스', accent: true, x: cx - 180, y: cy - 44, w: 360, h: 88 },
+    ];
+    // Directed edges capturing the relations described in the copy.
+    // Each: [from, to, style] where style ∈ 'arrow' | 'bi'
+    const edges = [
+      [1, 2, 'arrow'],
+      [1, 3, 'arrow'],
+      [2, 4, 'arrow'],
+      [3, 4, 'bi'],
+      [3, 5, 'arrow'],
+      [4, 6, 'arrow'],
+      [5, 6, 'bi'],
+      [1, 7, 'arrow'],
+      [2, 7, 'arrow'],
+      [5, 7, 'arrow'],
+      [6, 7, 'arrow'],
+    ];
+
+    const byId = Object.fromEntries(nodes.map(n => [n.id, n]));
+    // anchor picker — returns nearest edge midpoint of rect facing the other node
+    function anchor(a, b) {
+      const ax = a.x + a.w/2, ay = a.y + a.h/2;
+      const bx = b.x + b.w/2, by = b.y + b.h/2;
+      const dx = bx - ax, dy = by - ay;
+      // compute which side (left/right/top/bottom) of a faces b
+      const tx = Math.abs(dx) / (a.w/2);
+      const ty = Math.abs(dy) / (a.h/2);
+      if (tx >= ty) {
+        // exit on left/right
+        const sx = dx > 0 ? a.x + a.w : a.x;
+        const sy = ay + (dy * ((a.w/2) / Math.abs(dx || 1)));
+        return { x: sx, y: Math.max(a.y + 12, Math.min(a.y + a.h - 12, sy)) };
+      } else {
+        const sy = dy > 0 ? a.y + a.h : a.y;
+        const sx = ax + (dx * ((a.h/2) / Math.abs(dy || 1)));
+        return { x: Math.max(a.x + 16, Math.min(a.x + a.w - 16, sx)), y: sy };
+      }
+    }
+
+    const edgeSVG = edges.map(([f, t, s]) => {
+      const A = anchor(byId[f], byId[t]);
+      const B = anchor(byId[t], byId[f]);
+      // curved path: quadratic via midpoint nudged perpendicular for clarity
+      const mx = (A.x + B.x) / 2, my = (A.y + B.y) / 2;
+      const dx = B.x - A.x, dy = B.y - A.y;
+      const len = Math.hypot(dx, dy) || 1;
+      const nudge = 20;
+      const px = mx + (-dy / len) * nudge;
+      const py = my + (dx / len) * nudge;
+      const d = `M ${A.x} ${A.y} Q ${px} ${py} ${B.x} ${B.y}`;
+      const markerEnd = 'url(#arrow-end)';
+      const markerStart = s === 'bi' ? 'url(#arrow-start)' : '';
+      return `<path d="${d}" fill="none" stroke="rgba(28,28,28,0.45)" stroke-width="1.5" marker-end="${markerEnd}" ${markerStart ? `marker-start="${markerStart}"` : ''}/>`;
+    }).join('');
+
+    const nodeSVG = nodes.map(n => {
+      const fill = n.accent ? '#1c1c1c' : '#f7f4ed';
+      const stroke = n.accent ? '#1c1c1c' : 'rgba(28,28,28,0.4)';
+      const color = n.accent ? '#fcfbf8' : '#1c1c1c';
+      return `
+        <g>
+          <rect x="${n.x}" y="${n.y}" width="${n.w}" height="${n.h}" rx="12" ry="12"
+                fill="${fill}" stroke="${stroke}" stroke-width="1.5"/>
+          <text x="${n.x + n.w/2}" y="${n.y + n.h/2 + 8}" text-anchor="middle"
+                font-family="'Noto Sans KR', system-ui, sans-serif" font-size="24" font-weight="500" fill="${color}"
+                letter-spacing="-0.4">${n.label}</text>
+        </g>`;
+    }).join('');
+
+    host.innerHTML = `
+      <svg viewBox="0 0 ${W} ${H}" style="width: 100%; max-width: 1500px; height: auto;">
+        <defs>
+          <marker id="arrow-end" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="10" markerHeight="10" orient="auto-start-reverse">
+            <path d="M 0 0 L 10 5 L 0 10 z" fill="rgba(28,28,28,0.6)"/>
+          </marker>
+          <marker id="arrow-start" viewBox="0 0 10 10" refX="1" refY="5" markerWidth="10" markerHeight="10" orient="auto-start-reverse">
+            <path d="M 10 0 L 0 5 L 10 10 z" fill="rgba(28,28,28,0.6)"/>
+          </marker>
+        </defs>
+        ${edgeSVG}
+        ${nodeSVG}
+      </svg>`;
+  }
+
+  // ---------------------------------------------------------------------
+  // Variant 2 — LAYERED STACK: three rows, explicit arrows between layers
+  // ---------------------------------------------------------------------
+  function renderLayered() {
+    const W = 1500, H = 620;
+    const colGap = 60, rowGap = 80, boxW = 380, boxH = 90;
+    const leftX = 160, rightX = leftX + boxW + colGap;
+    const rows = [
+      { y: 20,  a: '① Digital Twin화',      b: '② 표현 프레임워크',            hLabel: 'formalize' },
+      { y: 180, a: '③ Handoff 기록',        b: '④ 학습 · 개선 루프',           hLabel: 'feed', bi: true },
+      { y: 340, a: '⑤ GRC 내재화',          b: '⑥ 단계적 자동화 · Redesign',    hLabel: 'enable', bi: true },
+    ];
+    const kill = { y: 500, label: '⑦ Kill-Switch 거버넌스' };
+
+    const edges = [];
+    // horizontal edges within each row
+    rows.forEach(r => {
+      const fromX = leftX + boxW, toX = rightX;
+      const y = r.y + boxH/2;
+      edges.push({ path: `M ${fromX} ${y} L ${toX} ${y}`, bi: r.bi });
+    });
+    // vertical edges between rows (left side + right side)
+    for (let i = 0; i < rows.length - 1; i++) {
+      const fromY = rows[i].y + boxH;
+      const toY = rows[i+1].y;
+      const xL = leftX + boxW/2;
+      const xR = rightX + boxW/2;
+      edges.push({ path: `M ${xL} ${fromY} L ${xL} ${toY}` });
+      edges.push({ path: `M ${xR} ${fromY} L ${xR} ${toY}` });
+    }
+    // edges from row3 down to Kill-Switch
+    const kCx = W/2;
+    const kX = kCx - boxW/2;
+    const xL = leftX + boxW/2, xR = rightX + boxW/2;
+    const yBot = rows[2].y + boxH;
+    edges.push({ path: `M ${xL} ${yBot} C ${xL} ${yBot+40}, ${kCx-40} ${kill.y-10}, ${kCx-20} ${kill.y}` });
+    edges.push({ path: `M ${xR} ${yBot} C ${xR} ${yBot+40}, ${kCx+40} ${kill.y-10}, ${kCx+20} ${kill.y}` });
+
+    const nodes = [];
+    rows.forEach(r => {
+      nodes.push({ x: leftX,  y: r.y, w: boxW, h: boxH, label: r.a });
+      nodes.push({ x: rightX, y: r.y, w: boxW, h: boxH, label: r.b });
+    });
+    nodes.push({ x: kX, y: kill.y, w: boxW, h: boxH, label: kill.label, accent: true });
+
+    const edgeSVG = edges.map(e =>
+      `<path d="${e.path}" fill="none" stroke="rgba(28,28,28,0.5)" stroke-width="1.5"
+             marker-end="url(#arrow-end)" ${e.bi ? 'marker-start="url(#arrow-start)"' : ''}/>`
+    ).join('');
+    const nodeSVG = nodes.map(n => {
+      const fill = n.accent ? '#1c1c1c' : '#f7f4ed';
+      const stroke = n.accent ? '#1c1c1c' : 'rgba(28,28,28,0.4)';
+      const color = n.accent ? '#fcfbf8' : '#1c1c1c';
+      return `
+        <rect x="${n.x}" y="${n.y}" width="${n.w}" height="${n.h}" rx="12" ry="12"
+              fill="${fill}" stroke="${stroke}" stroke-width="1.5"/>
+        <text x="${n.x + n.w/2}" y="${n.y + n.h/2 + 8}" text-anchor="middle"
+              font-family="'Noto Sans KR', system-ui, sans-serif" font-size="24" font-weight="500" fill="${color}">${n.label}</text>`;
+    }).join('');
+
+    host.innerHTML = `
+      <svg viewBox="0 0 ${W} ${H}" style="width: 100%; max-width: 1500px; height: auto;">
+        <defs>
+          <marker id="arrow-end" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="10" markerHeight="10" orient="auto-start-reverse">
+            <path d="M 0 0 L 10 5 L 0 10 z" fill="rgba(28,28,28,0.6)"/>
+          </marker>
+          <marker id="arrow-start" viewBox="0 0 10 10" refX="1" refY="5" markerWidth="10" markerHeight="10" orient="auto-start-reverse">
+            <path d="M 10 0 L 0 5 L 10 10 z" fill="rgba(28,28,28,0.6)"/>
+          </marker>
+        </defs>
+        ${edgeSVG}
+        ${nodeSVG}
+      </svg>`;
+  }
+
+  // ---------------------------------------------------------------------
+  // Variant 3 — CYCLE: 1→2→4→6 forward loop, GRC/Handoff as cross-braces,
+  // Kill-Switch as outer governance ring
+  // ---------------------------------------------------------------------
+  function renderCycle() {
+    const W = 1500, H = 620, cx = W/2, cy = H/2;
+    const R = 230; // radius for 6 orbit nodes
+    const nodes6 = [
+      { id: 1, label: '① Digital Twin화' },
+      { id: 2, label: '② 표현 프레임워크' },
+      { id: 4, label: '④ 학습 · 개선' },
+      { id: 6, label: '⑥ 단계적 자동화' },
+      { id: 5, label: '⑤ GRC 내재화' },
+      { id: 3, label: '③ Handoff 기록' },
+    ];
+    const boxW = 240, boxH = 80;
+    const placed = nodes6.map((n, i) => {
+      const a = (-Math.PI/2) + (i * (Math.PI*2 / 6));
+      const x = cx + Math.cos(a) * R - boxW/2;
+      const y = cy + Math.sin(a) * R - boxH/2;
+      return { ...n, x, y, w: boxW, h: boxH, angle: a };
+    });
+
+    // Forward ring arrows between consecutive placed nodes
+    const edges = [];
+    for (let i = 0; i < placed.length; i++) {
+      const a = placed[i], b = placed[(i+1) % placed.length];
+      const ax = a.x + a.w/2, ay = a.y + a.h/2;
+      const bx = b.x + b.w/2, by = b.y + b.h/2;
+      // point from edge of A toward edge of B along arc
+      const mx = (ax + bx)/2, my = (ay + by)/2;
+      const dx = mx - cx, dy = my - cy;
+      const d = Math.hypot(dx, dy) || 1;
+      // pull midpoint outward slightly so arc follows the ring
+      const pmx = cx + (dx/d) * (R + 24);
+      const pmy = cy + (dy/d) * (R + 24);
+      edges.push({ from: a, to: b, mid: {x: pmx, y: pmy}, kind: 'ring' });
+    }
+
+    function anchor(a, tx, ty) {
+      const ax = a.x + a.w/2, ay = a.y + a.h/2;
+      const dx = tx - ax, dy = ty - ay;
+      const sx = dx > 0 ? a.x + a.w : a.x;
+      const sy = ay + (dy * ((a.w/2) / Math.abs(dx || 1)));
+      const tX = Math.abs(dx) / (a.w/2);
+      const tY = Math.abs(dy) / (a.h/2);
+      if (tX >= tY) {
+        return { x: sx, y: Math.max(a.y + 10, Math.min(a.y + a.h - 10, sy)) };
+      } else {
+        const sy2 = dy > 0 ? a.y + a.h : a.y;
+        const sx2 = ax + (dx * ((a.h/2) / Math.abs(dy || 1)));
+        return { x: Math.max(a.x + 14, Math.min(a.x + a.w - 14, sx2)), y: sy2 };
+      }
+    }
+
+    const edgeSVG = edges.map(e => {
+      const A = anchor(e.from, e.mid.x, e.mid.y);
+      const B = anchor(e.to, e.mid.x, e.mid.y);
+      return `<path d="M ${A.x} ${A.y} Q ${e.mid.x} ${e.mid.y} ${B.x} ${B.y}"
+               fill="none" stroke="rgba(28,28,28,0.5)" stroke-width="1.5" marker-end="url(#arrow-end)"/>`;
+    }).join('');
+
+    // Kill-Switch in center
+    const killW = 320, killH = 88;
+    const killX = cx - killW/2, killY = cy - killH/2;
+    const killNode = `
+      <rect x="${killX}" y="${killY}" width="${killW}" height="${killH}" rx="12" ry="12"
+            fill="#1c1c1c" stroke="#1c1c1c"/>
+      <text x="${cx}" y="${cy + 8}" text-anchor="middle"
+            font-family="'Noto Sans KR', system-ui, sans-serif" font-size="24" font-weight="500" fill="#fcfbf8">⑦ Kill-Switch 거버넌스</text>`;
+
+    // Dashed lines from each ring node to Kill-Switch (governance covers all)
+    const radialSVG = placed.map(n => {
+      const A = anchor(n, cx, cy);
+      // end on kill rect edge
+      const ax = A.x, ay = A.y;
+      const dx = cx - ax, dy = cy - ay;
+      // clip to kill rect
+      const t = Math.min(
+        dx > 0 ? (killX - ax)/dx : (killX + killW - ax)/dx,
+        dy > 0 ? (killY - ay)/dy : (killY + killH - ay)/dy
+      );
+      const ex = ax + dx * (t > 0 ? t : 1);
+      const ey = ay + dy * (t > 0 ? t : 1);
+      return `<path d="M ${ax} ${ay} L ${ex} ${ey}" stroke="rgba(28,28,28,0.25)" stroke-width="1" stroke-dasharray="4 5" fill="none"/>`;
+    }).join('');
+
+    const nodeSVG = placed.map(n => `
+      <rect x="${n.x}" y="${n.y}" width="${n.w}" height="${n.h}" rx="12" ry="12"
+            fill="#f7f4ed" stroke="rgba(28,28,28,0.4)" stroke-width="1.5"/>
+      <text x="${n.x + n.w/2}" y="${n.y + n.h/2 + 8}" text-anchor="middle"
+            font-family="'Noto Sans KR', system-ui, sans-serif" font-size="22" font-weight="500" fill="#1c1c1c">${n.label}</text>`).join('');
+
+    host.innerHTML = `
+      <svg viewBox="0 0 ${W} ${H}" style="width: 100%; max-width: 1500px; height: auto;">
+        <defs>
+          <marker id="arrow-end" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="10" markerHeight="10" orient="auto-start-reverse">
+            <path d="M 0 0 L 10 5 L 0 10 z" fill="rgba(28,28,28,0.6)"/>
+          </marker>
+        </defs>
+        ${radialSVG}
+        ${edgeSVG}
+        ${killNode}
+        ${nodeSVG}
+      </svg>`;
+  }
+
+  function render() {
+    if (state.diagramVariant === 'layered') return renderLayered();
+    if (state.diagramVariant === 'cycle')   return renderCycle();
+    return renderOrbit();
+  }
+  render();
+
+  // ---------------- Tweak panel ----------------
+  const panel = document.createElement('div');
+  panel.id = 'tweak-panel';
+  panel.style.cssText = `
+    position: fixed; right: 24px; bottom: 24px; z-index: 2147483200;
+    background: #1c1c1c; color: #fcfbf8; border-radius: 12px;
+    padding: 18px 20px; font-family: 'Instrument Sans', system-ui, sans-serif;
+    box-shadow: 0 8px 30px rgba(0,0,0,0.3); display: none; min-width: 260px;
+    border: 1px solid rgba(252,251,248,0.15);
+  `;
+  panel.innerHTML = `
+    <div style="font-weight:600;font-size:13px;letter-spacing:0.1em;text-transform:uppercase;margin-bottom:12px;opacity:0.7;">Tweaks</div>
+    <div style="font-size:14px;margin-bottom:8px;opacity:0.8;">Slide 15 · 관계도 스타일</div>
+    <div id="tweak-variants" style="display:flex;flex-direction:column;gap:6px;">
+      <label style="display:flex;gap:10px;align-items:center;cursor:pointer;padding:8px 10px;border-radius:6px;background:rgba(252,251,248,0.04);">
+        <input type="radio" name="dv" value="orbit"/><span>Orbit (중앙 집중)</span>
+      </label>
+      <label style="display:flex;gap:10px;align-items:center;cursor:pointer;padding:8px 10px;border-radius:6px;background:rgba(252,251,248,0.04);">
+        <input type="radio" name="dv" value="layered"/><span>Layered (3층 적층)</span>
+      </label>
+      <label style="display:flex;gap:10px;align-items:center;cursor:pointer;padding:8px 10px;border-radius:6px;background:rgba(252,251,248,0.04);">
+        <input type="radio" name="dv" value="cycle"/><span>Cycle (순환 + 중앙)</span>
+      </label>
+    </div>
+    <div style="margin-top:12px;font-size:12px;opacity:0.5;">Slide 15에서 확인하세요.</div>
+  `;
+  document.body.appendChild(panel);
+
+  function syncRadios() {
+    panel.querySelectorAll('input[name="dv"]').forEach(i => {
+      i.checked = (i.value === state.diagramVariant);
+    });
+  }
+  syncRadios();
+  panel.addEventListener('change', (e) => {
+    if (e.target && e.target.name === 'dv') {
+      state.diagramVariant = e.target.value;
+      render();
+      try { window.parent.postMessage({type:'__edit_mode_set_keys', edits:{diagramVariant: state.diagramVariant}}, '*'); } catch(_) {}
+    }
+  });
+
+  // Register listener FIRST, then announce availability
+  window.addEventListener('message', (ev) => {
+    const d = ev.data || {};
+    if (d.type === '__activate_edit_mode') panel.style.display = 'block';
+    if (d.type === '__deactivate_edit_mode') panel.style.display = 'none';
+  });
+  try { window.parent.postMessage({type:'__edit_mode_available'}, '*'); } catch(_) {}
+})();
+</script>
+
+
+<!-- ============ 16. AGENT AS COLLEAGUE ============ -->
+<section data-label="Agent as Colleague">
+  <span class="slide-num">16</span>
+  <div class="eyebrow">Who · Agent as Colleague</div>
+  <h2 class="t-title" style="margin-bottom: 48px;">AI Agent를 "동료"로 본다는 것</h2>
+
+  <table class="mzc" style="font-size: 24px;">
+    <thead>
+      <tr>
+        <th style="width: 14%;">관점</th>
+        <th style="width: 43%;">도구(Tool)로 볼 때</th>
+        <th style="width: 43%;">동료(Colleague)로 볼 때</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr><td>소속</td><td style="color: var(--fg-muted);">구매자 · 관리자에게 귀속</td><td><b>소속 부서</b>에 귀속</td></tr>
+      <tr><td>자격</td><td style="color: var(--fg-muted);">제품 스펙 확인</td><td><b>직무 적합성</b> 평가</td></tr>
+      <tr><td>시작</td><td style="color: var(--fg-muted);">설치 · 배포</td><td><b>온보딩</b></td></tr>
+      <tr><td>권한</td><td style="color: var(--fg-muted);">기능 단위 설정</td><td><b>역할(Role) 단위</b> 부여</td></tr>
+      <tr><td>책임</td><td style="color: var(--fg-muted);">제품 결함 대응</td><td><b>업무 책임 소재</b> 정의</td></tr>
+      <tr><td>평가</td><td style="color: var(--fg-muted);">가동률 · 응답시간</td><td><b>업무 성과 평가(KPI)</b></td></tr>
+      <tr><td>교체</td><td style="color: var(--fg-muted);">업그레이드</td><td><b>이·퇴직 · 재교육</b></td></tr>
+    </tbody>
+  </table>
+
+  <div class="footnote" style="margin-top: 32px;">
+    이 관점 전환은 비유가 아니라, 인사·감사·조직 설계의 <b>기존 자산을 그대로 AI Agent에 적용</b>할 수 있게 한다. "거버넌스를 새로 만든다"가 "기존 거버넌스를 확장한다"로 축소된다.
+  </div>
+  <span class="slide-mark">04 · Who</span>
+</section>
+
+
+<!-- ============ 17. AGENT ONBOARDING CHECKLIST ============ -->
+<section data-label="Agent Onboarding">
+  <span class="slide-num">17</span>
+  <div class="eyebrow">Who · Agent 온보딩 체크리스트</div>
+  <h2 class="t-title" style="margin-bottom: 56px;">사람 구성원의 온보딩을 그대로 적용한다</h2>
+
+  <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 28px 48px;">
+    <div class="item"><div class="idx">01</div><div class="body"><div class="t-sub" style="font-size: 30px; margin-bottom: 6px;">직무기술서 정의</div><div class="t-small" style="font-size: 22px;">어느 노드에서, 무슨 결정을 내리는가</div></div></div>
+    <div class="item"><div class="idx">02</div><div class="body"><div class="t-sub" style="font-size: 30px; margin-bottom: 6px;">소속과 책임자 지정</div><div class="t-small" style="font-size: 22px;">인간 Accountable Owner는 누구인가</div></div></div>
+    <div class="item"><div class="idx">03</div><div class="body"><div class="t-sub" style="font-size: 30px; margin-bottom: 6px;">권한 부여(RBAC)</div><div class="t-small" style="font-size: 22px;">기존 사원 권한 체계와 정합</div></div></div>
+    <div class="item"><div class="idx">04</div><div class="body"><div class="t-sub" style="font-size: 30px; margin-bottom: 6px;">GRC 교육</div><div class="t-small" style="font-size: 22px;">정책·금칙을 DMN 규칙으로 하드코딩</div></div></div>
+    <div class="item"><div class="idx">05</div><div class="body"><div class="t-sub" style="font-size: 30px; margin-bottom: 6px;">트라이얼(Probation) 기간</div><div class="t-small" style="font-size: 22px;">제한 범위·저위험 케이스부터</div></div></div>
+    <div class="item"><div class="idx">06</div><div class="body"><div class="t-sub" style="font-size: 30px; margin-bottom: 6px;">성과 평가 · 재교육</div><div class="t-small" style="font-size: 22px;">로그 기반 KPI · 규칙 업데이트</div></div></div>
+    <div class="item" style="grid-column: 1 / 3;"><div class="idx">07</div><div class="body"><div class="t-sub" style="font-size: 30px; margin-bottom: 6px;">이·퇴직 절차</div><div class="t-small" style="font-size: 22px;">모델 교체·권한 회수·지식(Prompt·Context)의 후임자 이관</div></div></div>
+  </div>
+</section>
+
+
+<!-- ============ 18. QUANTITATIVE — 4 LAYERS ============ -->
+<section data-label="Outcomes · 4 Layers">
+  <span class="slide-num">18</span>
+  <div class="eyebrow">Outcomes · 네 개 층위</div>
+  <h2 class="t-title" style="margin-bottom: 48px;">성과는 단일 지표가 아니다. 네 층의 조합이다.</h2>
+
+  <table class="mzc" style="font-size: 24px;">
+    <thead>
+      <tr>
+        <th style="width: 18%;">층위</th>
+        <th style="width: 22%;">측정 대상</th>
+        <th style="width: 30%;">단기 (1년)</th>
+        <th style="width: 30%;">중기 (2 – 3년)</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr><td><b>① 운영 효율</b></td><td>프로세스 실행 속도 · 비용</td><td>작업 시간 감축, 변동 감소</td><td>엔드투엔드 Cycle Time 재설정</td></tr>
+      <tr><td><b>② 의사결정 품질</b></td><td>결정의 재현성 · 일관성</td><td>예외 처리 품질 균일화</td><td>DMN 기반 결정 로그의 재사용</td></tr>
+      <tr><td><b>③ 리스크 · 규제 대응</b></td><td>감사 · 사고 · 벌금 · 재작업 비용</td><td>사후 대응 → 설계 단계 차단</td><td>규제 변경 대응 속도 향상</td></tr>
+      <tr><td><b>④ 지식 자산 축적</b></td><td>프로세스 · 핸드오프 · 결정 로그</td><td>퇴직·이직 시 누수 감소</td><td>조직 재설계의 데이터 기반화</td></tr>
+    </tbody>
+  </table>
+
+  <div class="footnote" style="margin-top: 40px;">네 층위는 서로 맞물려 <b>축적형(Compounding) 성과 곡선</b>을 만든다.</div>
+  <span class="slide-mark">05 · Outcomes</span>
+</section>
+
+
+<!-- ============ 19. BENCHMARK NUMBERS ============ -->
+<section data-label="Benchmark Numbers">
+  <span class="slide-num">19</span>
+  <div class="eyebrow">Outcomes · 벤치마크 수치</div>
+  <h2 class="t-sub" style="margin-bottom: 56px;">우리가 노릴 참조선</h2>
+
+  <div class="stat-row" style="margin-bottom: 56px;">
+    <div class="stat">
+      <div class="val" style="color: var(--charcoal);">40 – 60%</div>
+      <div class="lbl">백오피스 프로세스<br/>Cycle Time 단축</div>
+    </div>
+    <div class="stat">
+      <div class="val">30 – 50%</div>
+      <div class="lbl">프로세스 변동(Variant)<br/>감소</div>
+    </div>
+    <div class="stat">
+      <div class="val">95%<span style="font-size: 48px;">+</span></div>
+      <div class="lbl">DMN 기반 결정 재현성<br/>(동일 조건 동일 결정)</div>
+    </div>
+    <div class="stat">
+      <div class="val" style="color: var(--signal);">11% → 30%대</div>
+      <div class="lbl">파일럿 → 프로덕션<br/>전환율 상향 기대</div>
+    </div>
+  </div>
+
+  <div class="stat-row">
+    <div class="stat">
+      <div class="val" style="font-size: 72px;">60%<span style="font-size: 42px;">+</span></div>
+      <div class="lbl">규제 이슈 설계 단계<br/>사전 차단율</div>
+    </div>
+    <div class="stat">
+      <div class="val" style="font-size: 72px;">50 – 70%</div>
+      <div class="lbl">감사 대응 준비 시간<br/>단축</div>
+    </div>
+    <div class="stat">
+      <div class="val" style="font-size: 72px;">95%<span style="font-size: 42px;">+</span></div>
+      <div class="lbl">표준 Handoff<br/>기록 커버리지</div>
+    </div>
+    <div class="stat">
+      <div class="val" style="font-size: 72px;">70%<span style="font-size: 42px;">+</span></div>
+      <div class="lbl">퇴직·이직 시<br/>지식 유실 구조적 감소</div>
+    </div>
+  </div>
+
+  <div class="footnote" style="margin-top: 48px;">벤치마크 · Beam AI · McKinsey · Process Mining · Camunda 2026 · NIST AI RMF · EU AI Act. 산업·규모에 따라 편차가 크다.</div>
+</section>
+
+
+<!-- ============ 20. S-CURVE ============ -->
+<section data-label="S-Curve">
+  <span class="slide-num">20</span>
+  <div class="eyebrow">Outcomes · ROI 곡선의 특성</div>
+  <h2 class="t-title" style="margin-bottom: 24px;">"점의 ROI"에서 "선의 복리"로</h2>
+  <div class="t-lead" style="max-width: 1400px; margin-bottom: 40px;">
+    Process Centric AX의 ROI는 직선이 아니라 <b>S자형 누적 곡선</b>이다. 초기 12–18개월은 Digital Twin화에 투자가 집중되고, 그 이후 축적 자산이 기반이 되어 <b>비선형적으로 증폭</b>된다.
+  </div>
+
+  <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 48px; align-items: start;">
+    <svg viewBox="0 0 900 400" style="width: 100%; height: auto; font-family: var(--font);">
+      <!-- axes -->
+      <line x1="60" y1="360" x2="860" y2="360" stroke="rgba(28,28,28,0.3)" stroke-width="1"/>
+      <line x1="60" y1="40" x2="60" y2="360" stroke="rgba(28,28,28,0.3)" stroke-width="1"/>
+      <!-- traditional flat line -->
+      <path d="M60 320 Q 300 310 500 300 T 860 290" fill="none" stroke="#5f5f5d" stroke-width="2" stroke-dasharray="6 6"/>
+      <!-- S-curve -->
+      <path d="M60 340 C 200 335 280 325 380 290 C 480 230 560 120 700 70 C 780 55 820 50 860 48" fill="none" stroke="#1c1c1c" stroke-width="4"/>
+      <!-- investment zone -->
+      <rect x="60" y="40" width="260" height="320" fill="rgba(47,107,255,0.06)"/>
+      <text x="80" y="70" font-size="18" fill="#2f6bff" font-weight="500">투자 집중 구간</text>
+      <text x="80" y="92" font-size="14" fill="#5f5f5d">12 – 18개월</text>
+      <!-- x-axis labels -->
+      <text x="60" y="385" font-size="14" fill="#5f5f5d">0</text>
+      <text x="320" y="385" font-size="14" fill="#5f5f5d">18M</text>
+      <text x="580" y="385" font-size="14" fill="#5f5f5d">36M</text>
+      <text x="820" y="385" font-size="14" fill="#5f5f5d">60M</text>
+      <!-- y-axis labels -->
+      <text x="10" y="360" font-size="14" fill="#5f5f5d">Low</text>
+      <text x="10" y="50" font-size="14" fill="#5f5f5d">High</text>
+      <!-- legend -->
+      <circle cx="540" cy="340" r="5" fill="#1c1c1c"/>
+      <text x="555" y="345" font-size="16" fill="#1c1c1c" font-weight="500">Process Centric AX</text>
+      <circle cx="540" cy="368" r="5" fill="#5f5f5d"/>
+      <text x="555" y="373" font-size="16" fill="#5f5f5d">반복 파일럿</text>
+    </svg>
+
+    <div class="col" style="gap: 20px;">
+      <div class="card" style="padding: 24px 28px;">
+        <div class="t-caption" style="margin-bottom: 8px;">축적 효과 ①</div>
+        <div class="t-body" style="color: var(--charcoal);">두 번째·세 번째 에이전트의 <b>한계 비용이 체감적으로 감소</b></div>
+      </div>
+      <div class="card" style="padding: 24px 28px;">
+        <div class="t-caption" style="margin-bottom: 8px;">축적 효과 ②</div>
+        <div class="t-body" style="color: var(--charcoal);">조직 재설계의 <b>실패율이 유의미하게 감소</b></div>
+      </div>
+      <div class="card" style="padding: 24px 28px;">
+        <div class="t-caption" style="margin-bottom: 8px;">축적 효과 ③</div>
+        <div class="t-body" style="color: var(--charcoal);">규제·사후 대응 비용이 <b>구조적으로 감소</b></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ============ 21. FIVE LEADERSHIP SHIFTS ============ -->
+<section data-label="5 Leadership Shifts" class="dark">
+  <span class="slide-num">21</span>
+  <div class="eyebrow">Leadership · 다섯 가지 관점 전환</div>
+  <h2 class="t-title" style="margin-bottom: 56px; color: var(--offwhite);">로드맵보다 오래 가는 것은 관점이다.</h2>
+
+  <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 28px 56px;">
+    <div style="display: flex; gap: 24px;">
+      <div class="t-sub" style="font-size: 52px; color: rgba(252,251,248,0.4); font-family: var(--font); font-weight: 500;">01</div>
+      <div>
+        <div class="t-small" style="font-size: 22px; color: rgba(252,251,248,0.55); margin-bottom: 6px;">최신 기술의 선택 →</div>
+        <div class="t-sub" style="color: var(--offwhite); font-size: 32px;">일하는 방식의 모델링</div>
+      </div>
+    </div>
+
+    <div style="display: flex; gap: 24px;">
+      <div class="t-sub" style="font-size: 52px; color: rgba(252,251,248,0.4); font-family: var(--font); font-weight: 500;">02</div>
+      <div>
+        <div class="t-small" style="font-size: 22px; color: rgba(252,251,248,0.55); margin-bottom: 6px;">몇 건 했는가 →</div>
+        <div class="t-sub" style="color: var(--offwhite); font-size: 32px;">얼마나 축적되었는가</div>
+      </div>
+    </div>
+
+    <div style="display: flex; gap: 24px;">
+      <div class="t-sub" style="font-size: 52px; color: rgba(252,251,248,0.4); font-family: var(--font); font-weight: 500;">03</div>
+      <div>
+        <div class="t-small" style="font-size: 22px; color: rgba(252,251,248,0.55); margin-bottom: 6px;">IT 프로젝트 →</div>
+        <div class="t-sub" style="color: var(--offwhite); font-size: 32px;">조직 운영 체계의 진화</div>
+      </div>
+    </div>
+
+    <div style="display: flex; gap: 24px;">
+      <div class="t-sub" style="font-size: 52px; color: rgba(252,251,248,0.4); font-family: var(--font); font-weight: 500;">04</div>
+      <div>
+        <div class="t-small" style="font-size: 22px; color: rgba(252,251,248,0.55); margin-bottom: 6px;">GRC는 비용 →</div>
+        <div class="t-sub" style="color: var(--offwhite); font-size: 32px;">GRC는 속도의 레일</div>
+      </div>
+    </div>
+
+    <div style="display: flex; gap: 24px; grid-column: 1 / 3; justify-content: center; margin-top: 12px;">
+      <div class="t-sub" style="font-size: 52px; color: #ffbfa8; font-family: var(--font); font-weight: 500;">05</div>
+      <div>
+        <div class="t-small" style="font-size: 22px; color: rgba(252,251,248,0.55); margin-bottom: 6px;">AI를 도입한다 →</div>
+        <div class="t-sub" style="color: #ffbfa8; font-size: 32px;">동료를 영입한다</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="footnote" style="margin-top: 56px; color: rgba(252,251,248,0.55); border-top: 1px solid rgba(252,251,248,0.15); padding-top: 24px;">
+    한 꼭지를 움직이면 나머지가 따라 움직인다. 관점이 정립되면, 로드맵과 액션 아이템은 시기별로 교체되어도 일관성이 유지된다.
+  </div>
+  <span class="slide-mark" style="color: rgba(252,251,248,0.55);">06 · Leadership</span>
+</section>
+
+
+<!-- ============ 22. PLATFORM EVAL AXES ============ -->
+<section data-label="Platform Evaluation">
+  <span class="slide-num">22</span>
+  <div class="eyebrow">Leadership · 플랫폼 탐색의 새 기준</div>
+  <h2 class="t-title" style="margin-bottom: 48px;">평가 축이 이동한다</h2>
+
+  <table class="mzc" style="font-size: 26px;">
+    <thead>
+      <tr>
+        <th style="width: 50%;">기존 평가 축</th>
+        <th style="width: 50%; color: var(--charcoal); font-weight: 600;">새로운 평가 축</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr><td style="color: var(--fg-muted);">최신 모델 지원 여부</td><td><b>사내 프로세스를 곧바로 모델링·실행할 수 있는가</b></td></tr>
+      <tr><td style="color: var(--fg-muted);">에이전트 빌더의 화려함</td><td><b>사람–AI Handoff가 기록·통제되는가</b></td></tr>
+      <tr><td style="color: var(--fg-muted);">No/Low-Code의 손쉬움</td><td><b>DMN·BPMN·CMMN과 정합적으로 연결되는가</b></td></tr>
+      <tr><td style="color: var(--fg-muted);">벤더의 로드맵 속도</td><td><b>플랫폼 교체 시 프로세스 자산이 이전 가능한가</b></td></tr>
+      <tr><td style="color: var(--fg-muted);">GRC 부가기능 존재</td><td><b>GRC가 설계 단계에 내재화되어 있는가</b></td></tr>
+    </tbody>
+  </table>
+
+  <div class="footnote" style="margin-top: 40px;">
+    핵심은 "최신 기술의 우선 적용"이 아니라, <b>"사람과 AI Agent가 실제로 일해야 하는 프로세스를 곧바로 모델링하고 적용할 수 있도록 지원하는 플랫폼"</b>의 탐색이다.
+  </div>
+</section>
+
+
+<!-- ============ 23. CONCLUSION ============ -->
+<section data-label="Conclusion" class="hero-wash" style="justify-content: space-between;">
+  <div>
+    <div class="eyebrow">Conclusion</div>
+    <h2 class="t-title" style="margin-bottom: 48px; max-width: 1600px; line-height: 1.2;">
+      AX의 본질은 "더 많은 AI"가 아니다.
+    </h2>
+    <div class="t-sub" style="color: var(--fg-muted); max-width: 1600px; line-height: 1.35;">
+      AI가 들어와도 기업의 일하는 방식이<br/>
+      누수 없이 축적되고 진화하게 만드는 것이다.
+    </div>
+  </div>
+
+  <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 64px; align-items: end;">
+    <div>
+      <div class="big-num t-numeric" style="font-size: 140px; letter-spacing: -3.5px; color: var(--signal);">57.4<span class="unit" style="font-size: 40px;">%p</span></div>
+      <div class="t-body" style="margin-top: 20px; max-width: 500px;">도입률 61.1%와 내재화 3.7% 사이의 간극. 곧 시장 기회이자 조직 책임.</div>
+    </div>
+
+    <div class="card-dark">
+      <div class="t-caption" style="color: rgba(252,251,248,0.55); margin-bottom: 16px;">우리가 제안하는 AX의 정의</div>
+      <div class="t-body" style="color: rgba(252,251,248,0.92); font-size: 30px; line-height: 1.4;">
+        통제 가능한 속도로,<br/>
+        지속 가능한 방식으로,<br/>
+        누수 없이 축적되는 형태로<br/>
+        간극을 메우는 것.
+      </div>
+    </div>
+  </div>
+
+  <div style="display: flex; justify-content: space-between; align-items: center; border-top: 1px solid var(--border); padding-top: 24px; margin-top: 40px;">
+    <div class="wordmark">MEGAZONE<span class="dot">·</span>CLOUD</div>
+    <div class="t-small">We Are Digital Architects.  ·  2026.04  ·  v2</div>
+  </div>
+</section>
+
+</deck-stage>
+
+<script src="deck-stage.js"></script>
+</body>
+</html>
